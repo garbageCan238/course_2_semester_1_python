@@ -5,13 +5,15 @@ class UninterruptiblePowerSupply:
         self.capacity = capacity
 
 def main():
-    power_supply = UninterruptiblePowerSupply()
+    first = UninterruptiblePowerSupply()
+    first.manufacturer = "Samsung"
+    first.brand = "Apple"
+    first.capacity = 500
 
-    power_supply.manufacturer = "Samsung"
-    power_supply.brand = "Apple"
-    power_supply.capacity = 500
+    print(f"first object: manufacturer: {first.manufacturer}, brand: {first.brand}, capacity: {first.capacity}")
 
-    print(f"manufacturer: {power_supply.manufacturer}, brand: {power_supply.brand}, capacity: {power_supply.capacity}")
+    second = UninterruptiblePowerSupply("Dell", "Hp", 800)
+    print(f"second object: manufacturer: {second.manufacturer}, brand: {second.brand}, capacity: {second.capacity}")
 
 if __name__ == "__main__":
     main()
