@@ -19,12 +19,8 @@ class UninterruptiblePowerSupply:
 
 class PowerSupplies:
     def __init__(self, count):
-        self._count = count
+        self.count = count
         self.supplies = [None] * count
-
-    @property
-    def count(self):
-        return self._count
 
     def __getitem__(self, index):
         return self.supplies[index]
