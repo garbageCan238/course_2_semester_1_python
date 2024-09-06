@@ -1,30 +1,26 @@
-import json
 import random
-
+import time
 
 class UninterruptiblePowerSupply:
-    possible_manufacturers = ["Apple", "Samsung", "Hp", "Dell", "Xiaomi", "Huawei", "Techno", "Google", "OnePlus",
-                              "Alcatel", "Asus", "Lenovo", "Vivo"]
+    possible_manufacturers = ["Apple", "Samsung", "Hp", "Dell", "Xiaomi", "Huawei", "Techno", "Google", "OnePlus", "Alcatel", "Asus", "Lenovo", "Vivo"]
     possible_brands = ["S1", "S2", "S3", "Redmi", "Nova", "Spark", "A60", "Go", "K15", "Galaxy", "15", "13", "B256"]
 
     def __init__(self):
         self.manufacturer = random.choice(self.possible_manufacturers)
         self.brand = random.choice(self.possible_brands)
-        self.capacity = random.randint(0, 1000)
+        self.capacity = random.randint(0, 100_000)
 
-    def print_info(self):
-        print(
-            f"UninterruptiblePowerSupply: manufacturer: {self.manufacturer}, brand: {self.brand}, capacity: {self.capacity}")
+    def __repr__(self):
+        return f"UninterruptiblePowerSupply(manufacturer={self.manufacturer}, brand={self.brand}, capacity={self.capacity})"
 
 
 class PowerSupplies:
     def __init__(self, count):
-        self._count = count
-        self.supplies = [None] * count
+        self.supplies = [UninterruptiblePowerSupply() for _ in range(count)]
 
     @property
     def count(self):
-        return self._count
+        return len(self.supplies)
 
     def __getitem__(self, index):
         return self.supplies[index]
@@ -32,48 +28,81 @@ class PowerSupplies:
     def __setitem__(self, index, value):
         self.supplies[index] = value
 
-    def print_info(self):
-        for supply in self.supplies:
-            supply.print_info()
+    def selection_sort(self, compare):
+        for j in range(self.count - 1):
+            min_idx = j
+            for i in range(j + 1, self.count):
+                if compare(self.supplies[min_idx], self.supplies[i]):
+                    min_idx = i
+            self.supplies[j], self.supplies[min_idx] = self.supplies[min_idx], self.supplies[j]
+
+    def bubble_sort(self, compare):
+        for j in range(self.count - 1):
+            for i in range(self.count - 1):
+                if compare(self.supplies[i], self.supplies[i + 1]):
+                    self.supplies[i], self.supplies[i + 1] = self.supplies[i + 1], self.supplies[i]
+
+    def shaker_sort(self, compare):
+        is_swapped = True
+        start = 0
+        end = self.count
+
+        while is_swapped:
+            is_swapped = False
+            for i in range(start, end - 1):
+                if compare(self.supplies[i], self.supplies[i + 1]):
+                    self.supplies[i], self.supplies[i + 1] = self.supplies[i + 1], self.supplies[i]
+                    is_swapped = True
+            if not is_swapped:
+                break
+            is_swapped = False
+            end -= 1
+            for i in range(end - 1, start - 1, -1):
+                if compare(self.supplies[i], self.supplies[i + 1]):
+                    self.supplies[i], self.supplies[i + 1] = self.supplies[i + 1], self.supplies[i]
+                    is_swapped = True
+            start += 1
+
+    def shell_sort(self, compare):
+        interval = self.count // 2
+        while interval > 0:
+            for i in range(interval, self.count):
+                temp = self.supplies[i]
+                j = i
+                while j >= interval and compare(self.supplies[j - interval], temp):
+                    self.supplies[j] = self.supplies[j - interval]
+                    j -= interval
+                self.supplies[j] = temp
+            interval //= 2
 
 
 def main():
-    single_power_supply = UninterruptiblePowerSupply()
+    count = 10000
+    print(f"Sorting {count} power supplies by capacity...")
 
-    power_supplies = PowerSupplies(5)
-    for i in range(power_supplies.count):
-        power_supplies[i] = UninterruptiblePowerSupply()
+    power_supplies = PowerSupplies(count)
+    start_time = time.time()
+    power_supplies.selection_sort(lambda x, y: x.capacity > y.capacity)
+    elapsed_time = time.time() - start_time
+    print(f"Selection sort, time elapsed: {elapsed_time:.2f} seconds")
 
-    print("Single: ")
-    single_power_supply.print_info()
+    power_supplies = PowerSupplies(count)
+    start_time = time.time()
+    power_supplies.bubble_sort(lambda x, y: x.capacity > y.capacity)
+    elapsed_time = time.time() - start_time
+    print(f"Bubble sort, time elapsed: {elapsed_time:.2f} seconds")
 
-    print("Container: ")
-    power_supplies.print_info()
+    power_supplies = PowerSupplies(count)
+    start_time = time.time()
+    power_supplies.shaker_sort(lambda x, y: x.capacity > y.capacity)
+    elapsed_time = time.time() - start_time
+    print(f"Shaker sort, time elapsed: {elapsed_time:.2f} seconds")
 
-    with open("single_power_supply.json", "w") as file:
-        json.dump(single_power_supply.__dict__, file)
-
-    with open("power_supplies.json", "w") as file:
-        json.dump([supply.__dict__ for supply in power_supplies.supplies], file)
-
-    with open("single_power_supply.json", "r") as file:
-        data = json.load(file)
-        deserialized_single = UninterruptiblePowerSupply()
-        deserialized_single.__dict__.update(data)
-
-    with open("power_supplies.json", "r") as file:
-        data = json.load(file)
-        deserialized_supplies = PowerSupplies(5)
-        for i, supply_data in enumerate(data):
-            deserialized_supply = UninterruptiblePowerSupply()
-            deserialized_supply.__dict__.update(supply_data)
-            deserialized_supplies[i] = deserialized_supply
-
-    print("\nDeserialized single: ")
-    deserialized_single.print_info()
-
-    print("Deserialized container: ")
-    deserialized_supplies.print_info()
+    power_supplies = PowerSupplies(count)
+    start_time = time.time()
+    power_supplies.shell_sort(lambda x, y: x.capacity > y.capacity)
+    elapsed_time = time.time() - start_time
+    print(f"Shell sort, time elapsed: {elapsed_time:.2f} seconds")
 
 
 if __name__ == "__main__":
