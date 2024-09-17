@@ -1,5 +1,6 @@
 import random
 import time
+import copy
 
 class UninterruptiblePowerSupply:
     possible_manufacturers = ["Apple", "Samsung", "Hp", "Dell", "Xiaomi", "Huawei", "Techno", "Google", "OnePlus", "Alcatel", "Asus", "Lenovo", "Vivo"]
@@ -75,34 +76,47 @@ class PowerSupplies:
                 self.supplies[j] = temp
             interval //= 2
 
+    def insertion_sort(self, compare):
+        for i in range(self.count - 1):
+            for j in range(i + 1, 0, -1):
+                if compare(self.supplies[j - 1], self.supplies[j]):
+                    self.supplies[j], self.supplies[j-1] = self.supplies[j-1], self.supplies[j]
+
 
 def main():
-    count = 10000
+    count = 5000
     print(f"Sorting {count} power supplies by capacity...")
 
-    power_supplies = PowerSupplies(count)
+    original = PowerSupplies(count)
+    power_supplies = copy.deepcopy(original)
     start_time = time.time()
     power_supplies.selection_sort(lambda x, y: x.capacity > y.capacity)
     elapsed_time = time.time() - start_time
     print(f"Selection sort, time elapsed: {elapsed_time:.2f} seconds")
 
-    power_supplies = PowerSupplies(count)
+    power_supplies = copy.deepcopy(original)
     start_time = time.time()
     power_supplies.bubble_sort(lambda x, y: x.capacity > y.capacity)
     elapsed_time = time.time() - start_time
     print(f"Bubble sort, time elapsed: {elapsed_time:.2f} seconds")
 
-    power_supplies = PowerSupplies(count)
+    power_supplies = copy.deepcopy(original)
     start_time = time.time()
     power_supplies.shaker_sort(lambda x, y: x.capacity > y.capacity)
     elapsed_time = time.time() - start_time
     print(f"Shaker sort, time elapsed: {elapsed_time:.2f} seconds")
 
-    power_supplies = PowerSupplies(count)
+    power_supplies = copy.deepcopy(original)
     start_time = time.time()
     power_supplies.shell_sort(lambda x, y: x.capacity > y.capacity)
     elapsed_time = time.time() - start_time
     print(f"Shell sort, time elapsed: {elapsed_time:.2f} seconds")
+
+    power_supplies = copy.deepcopy(original)
+    start_time = time.time()
+    power_supplies.insertion_sort(lambda x, y: x.capacity > y.capacity)
+    elapsed_time = time.time() - start_time
+    print(f"Insertion sort, time elapsed: {elapsed_time:.2f} seconds")
 
 
 if __name__ == "__main__":
