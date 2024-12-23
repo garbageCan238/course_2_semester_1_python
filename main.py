@@ -1,17 +1,17 @@
 class UninterruptiblePowerSupply:
-    def __init__(self, manufacturer=None, brand=None, capacity=None):
-        self.manufacturer = manufacturer
-        self.brand = brand
-        self.capacity = capacity
+    manufacturer: str
+    brand: str
+    capacity: int
 
 def main():
-    power_supply = UninterruptiblePowerSupply()
+    UninterruptiblePowerSupply.manufacturer = "Samsung"
+    UninterruptiblePowerSupply.brand = "Apple"
+    UninterruptiblePowerSupply.capacity = 500
 
-    power_supply.manufacturer = "Samsung"
-    power_supply.brand = "Apple"
-    power_supply.capacity = 500
-
-    print(f"manufacturer: {power_supply.manufacturer}, brand: {power_supply.brand}, capacity: {power_supply.capacity}")
+    print(f"manufacturer: {UninterruptiblePowerSupply.manufacturer}, "
+          f"\nbrand: {UninterruptiblePowerSupply.brand}, "
+          f"\ncapacity: {UninterruptiblePowerSupply.capacity}"
+          )
 
 if __name__ == "__main__":
     main()
